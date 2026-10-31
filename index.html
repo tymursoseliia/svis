@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Информация о транспортных средствах · Таможенный контроль</title>
   <style>
     :root {
@@ -282,44 +282,67 @@
     #cabinet-view {
       display: none;
       min-height: 100vh;
+      min-height: 100dvh;
       background: #0d3829;
       color: #fff;
-      padding-bottom: 85px;
     }
 
     .cab-container {
       max-width: 500px;
       margin: 0 auto;
       min-height: 100vh;
+      min-height: 100dvh;
       background: linear-gradient(180deg, #114433 0%, #0d3829 100%);
       box-shadow: 0 0 40px rgba(0,0,0,0.4);
       display: flex;
       flex-direction: column;
       position: relative;
+      padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
+      box-sizing: border-box;
     }
 
     /* Шапка кабинета */
     .cab-header {
-      padding: 16px 20px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      background: rgba(10, 39, 29, 0.7);
-      backdrop-filter: blur(10px);
+      background: rgba(10, 39, 29, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
     }
     .cab-logo-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
+    }
+    .cab-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #f0f7f3;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cab-back-btn:hover, .cab-back-btn:active {
+      background: rgba(200,162,74,0.3);
+      border-color: var(--acc);
+      color: #fde047;
     }
     .cab-title {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: #ecf3ee;
     }
@@ -327,6 +350,10 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      position: relative;
+    }
+    .cab-bell-wrap {
+      position: relative;
     }
     .cab-bell {
       position: relative;
@@ -338,12 +365,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .cab-bell:hover {
+      background: rgba(255,255,255,0.1);
     }
     .cab-bell .badge {
       position: absolute;
       top: -2px;
       right: -4px;
-      background: #c8a24a;
+      background: #eab308;
       color: #0f3d2e;
       font-size: 10px;
       font-weight: 800;
@@ -354,6 +386,100 @@
       align-items: center;
       justify-content: center;
       border: 2px solid #114433;
+      animation: bellPulse 2s infinite;
+    }
+    @keyframes bellPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+
+    /* Выпадающее окно уведомлений (колокольчик) */
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 300px;
+      max-width: calc(100vw - 32px);
+      background: #0b3223;
+      border: 1px solid rgba(200, 162, 74, 0.5);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      z-index: 10001;
+      padding: 12px;
+      animation: notifFadeIn 0.2s ease-out;
+    }
+    .notif-dropdown.show {
+      display: block;
+    }
+    @keyframes notifFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .notif-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 7px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5c368;
+    }
+    .notif-close-btn {
+      background: none;
+      border: none;
+      color: #9cbcae;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 6px;
+    }
+    .notif-card {
+      margin-top: 8px;
+      background: rgba(20, 80, 59, 0.75);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      border-radius: 9px;
+      padding: 10px 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .notif-card:hover {
+      background: rgba(20, 80, 59, 0.98);
+      border-color: #eab308;
+      transform: translateY(-1px);
+    }
+    .notif-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fde047;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .notif-card-desc {
+      font-size: 11px;
+      line-height: 1.4;
+      color: #d1e2da;
+      margin-bottom: 5px;
+    }
+    .notif-card-cta {
+      font-size: 10.5px;
+      color: #93c5fd;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    @keyframes pulseTarget {
+      0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.85); border-color: #fde047; }
+      50% { box-shadow: 0 0 25px 6px rgba(234, 179, 8, 0.9); border-color: #fde047; }
+      100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); border-color: rgba(255, 255, 255, 0.14); }
+    }
+    .pulse-attention {
+      animation: pulseTarget 1.8s ease-in-out 3;
+      border-color: #fde047 !important;
     }
 
     /* Карточка личных данных */
@@ -479,16 +605,17 @@
     }
     .route-steps {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       position: relative;
+      gap: 4px;
     }
     .route-steps::before {
       content: '';
       position: absolute;
       top: 14px;
-      left: 20px;
-      right: 20px;
+      left: 16px;
+      right: 16px;
       height: 3px;
       background: #2a634e;
       z-index: 1;
@@ -496,29 +623,35 @@
     .route-progress {
       position: absolute;
       top: 14px;
-      left: 20px;
-      width: 75%;
+      left: 16px;
+      width: 50%;
       height: 3px;
-      background: #c8a24a;
+      background: linear-gradient(90deg, #c8a24a 0%, #22c55e 100%);
       z-index: 2;
+      transition: width 0.4s ease;
     }
     .step-point {
       position: relative;
       z-index: 3;
       text-align: center;
-      width: 80px;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .step-dot {
       width: 28px;
       height: 28px;
       border-radius: 50%;
       background: #14503b;
-      border: 3px solid #7bb59d;
+      border: 2.5px solid #7bb59d;
       margin: 0 auto 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 11px;
+      font-weight: 700;
       color: #fff;
     }
     .step-point.passed .step-dot {
@@ -531,6 +664,12 @@
       border-color: #86efac;
       box-shadow: 0 0 10px rgba(34,197,94,0.6);
       animation: pulse 1.8s infinite;
+      color: #fff;
+    }
+    .step-point.upcoming .step-dot {
+      background: #0f3728;
+      border-color: rgba(255,255,255,0.22);
+      color: #729686;
     }
     @keyframes pulse {
       0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
@@ -538,9 +677,224 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0); }
     }
     .step-label {
-      font-size: 11.5px;
+      font-size: 10px;
       font-weight: 600;
+      color: #e2ede7;
+      line-height: 1.25;
+      word-break: normal;
+      text-align: center;
+    }
+
+    /* Карточка заблокированных следующих этапов */
+    .timeline-locked-card {
+      background: rgba(16, 59, 44, 0.45);
+      border: 1px dashed rgba(200, 162, 74, 0.4);
+      border-radius: 14px;
+      padding: 18px 16px;
+      text-align: center;
+      margin-top: 14px;
+    }
+    .timeline-locked-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+    .timeline-locked-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #e5c368;
+      margin-bottom: 5px;
+    }
+    .timeline-locked-desc {
+      font-size: 11.5px;
+      color: #9cbcae;
+      line-height: 1.45;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* Модальное окно поддержки и FAQ */
+    .support-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 10005;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+    .support-modal-box {
+      background: #0f392b;
       color: #fff;
+      border: 1px solid var(--acc);
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      max-height: 90dvh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .support-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .support-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fde047;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .support-subtitle {
+      font-size: 11.5px;
+      color: #9cbcae;
+      margin-top: 3px;
+    }
+    .support-close {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .support-close:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .support-contact-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    @media(max-width: 480px) {
+      .support-contact-cards { grid-template-columns: 1fr; }
+    }
+    .support-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .support-card .sc-title {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #9cbcae;
+    }
+    .support-card .sc-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .support-tg-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #229ED9;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13.5px;
+      box-shadow: 0 4px 14px rgba(34, 158, 217, 0.4);
+      margin-bottom: 16px;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .support-tg-btn:hover {
+      background: #1e8dc2;
+      transform: translateY(-1px);
+    }
+    .faq-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #e5c368;
+      margin: 16px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .faq-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .faq-question {
+      padding: 11px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2ede7;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .faq-question:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fde047;
+    }
+    .faq-arrow {
+      transition: transform 0.2s;
+      font-size: 11px;
+      color: #9cbcae;
+    }
+    .faq-item.open .faq-arrow {
+      transform: rotate(180deg);
+      color: #fde047;
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 14px 12px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #c0d8cd;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 8px;
+    }
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+    .support-form-wrap {
+      margin-top: 16px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .staff-login-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11.5px;
+      color: #638575;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .staff-login-link:hover {
+      color: #9cbcae;
     }
 
     /* Местонахождение авто */
@@ -722,21 +1076,28 @@
       transform: translateY(-1px);
     }
 
-    /* Нижняя навигация мобильного типа */
+    /* Нижняя навигация мобильного типа (намертво зафиксирована на всех устройствах) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 0;
+      right: 0;
+      margin: 0 auto;
       width: 100%;
       max-width: 500px;
-      background: rgba(8, 30, 22, 0.95);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255,255,255,0.12);
+      background: rgba(8, 30, 22, 0.97);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(255,255,255,0.14);
       display: flex;
       justify-content: space-around;
-      padding: 8px 10px;
-      z-index: 1000;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+      z-index: 10000;
+      box-sizing: border-box;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.45);
     }
     .b-nav-item {
       display: flex;
@@ -914,49 +1275,33 @@
 
         <form class="reg-form" id="clientRegForm" onsubmit="handleRegistration(event)">
           <div class="form-group">
-            <label>ФИО лида (как в договоре)</label>
+            <label>ФИО клиента (как в договоре)</label>
             <input type="text" id="reg_fio" value="Шлыков Юрий Геннадьевич" required placeholder="Иванов Иван Иванович">
           </div>
 
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label>Номер телефона</label>
-              <input type="tel" id="reg_phone" value="+7 (926) 541-89-20" required placeholder="+7 (___) ___-__-__">
-            </div>
-            <div class="form-group">
-              <label>Серия и номер паспорта</label>
-              <input type="text" id="reg_passport" value="45 18 892341" required placeholder="45 18 123456">
-            </div>
+          <div class="form-group">
+            <label>Номер телефона</label>
+            <input type="tel" id="reg_phone" value="+7 (926) 541-89-20" required placeholder="+7 (___) ___-__-__">
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label>Личный номер / ИНН</label>
-              <input type="text" id="reg_inn" value="772005512747" placeholder="ИНН или личный код">
+              <label>Логин / Номер договора</label>
+              <input type="text" id="reg_login" value="BY-8849102" required placeholder="Номер договора или логин">
             </div>
             <div class="form-group">
-              <label>Дата выдачи паспорта</label>
-              <input type="text" id="reg_pass_date" value="14.05.2018" placeholder="ДД.ММ.ГГГГ">
+              <label>Пароль для входа</label>
+              <input type="password" id="reg_password" value="customs2026" required placeholder="••••••••">
             </div>
           </div>
 
-          <div class="form-group">
-            <label>Кем выдан паспорт</label>
-            <input type="text" id="reg_pass_issuer" value="Отделом УФМС России по г. Москве" placeholder="Наименование органа">
-          </div>
-
-          <div class="form-group">
-            <label>Адрес регистрации</label>
-            <input type="text" id="reg_address" value="г. Москва, ул. Перовская, д. 22, корп. 1, кв. 84" placeholder="г. Москва, ул. ...">
-          </div>
-
-          <div class="form-group">
-            <label>VIN-код автомобиля (17 знаков)</label>
-            <input type="text" id="reg_vin" value="WBAJU81040N872911" maxlength="20" style="text-transform:uppercase; font-family:'Courier New',monospace; font-weight:bold; letter-spacing:1px;">
+          <div style="font-size:11.5px;color:#495449;background:#e2eae5;padding:8px 12px;border-radius:6px;margin:8px 0 14px;display:flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1b634b" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Паспортные данные владельца и параметры ТС синхронизируются автоматически из базы ФТС / ЕАЭС при авторизации.</span>
           </div>
 
           <button type="submit" class="btn-submit">
-            <span>Зарегистрироваться и войти в кабинет</span>
+            <span>Войти в личный кабинет</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
 
@@ -1002,8 +1347,12 @@
       <!-- Верхняя панель кабинета -->
       <div class="cab-header">
         <div class="cab-logo-wrap">
+          <button class="cab-back-btn" id="cabBackBtn" onclick="handleCabinetBack()" title="Вернуться в меню">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <span>В меню</span>
+          </button>
           <!-- Эмблема РФ / Таможни -->
-          <svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M24 2L42 8V21C42 33 34 41 24 46C14 41 6 33 6 21V8L24 2Z" fill="#14503b" stroke="#c8a24a" stroke-width="2"/>
             <path d="M24 6L38 11V21C38 30.5 31.5 37 24 41C16.5 37 10 30.5 10 21V11L24 6Z" fill="#0d3829" stroke="#e5c368" stroke-width="0.8"/>
             <path d="M19 16C19 14.5 20.5 13.5 22 14.5L24 16L26 14.5C27.5 13.5 29 14.5 29 16V18C29 20 27.5 21.5 25.5 22.5L24 23.5L22.5 22.5C20.5 21.5 19 20 19 18V16Z" fill="#e5c368"/>
@@ -1018,10 +1367,31 @@
         </div>
         
         <div class="cab-actions">
-          <button class="cab-bell" title="Уведомления">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span class="badge">2</span>
-          </button>
+          <div class="cab-bell-wrap">
+            <button class="cab-bell" id="cabBellBtn" onclick="toggleNotifications()" title="Уведомления">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="badge" id="cabBellBadge">1</span>
+            </button>
+            <div class="notif-dropdown" id="notificationsDropdown">
+              <div class="notif-head">
+                <span>🔔 Уведомления системы</span>
+                <button type="button" class="notif-close-btn" onclick="toggleNotifications(false)">✕</button>
+              </div>
+              <div class="notif-card" onclick="goToInvoiceStep()">
+                <div class="notif-card-header">
+                  <span>⚠️</span>
+                  <span>Требуется оплата за авто</span>
+                </div>
+                <div class="notif-card-desc">
+                  Инвойс продавца за автомобиль сформирован. Статус: <b style="color:#fde047;">Ожидает оплаты</b>.
+                </div>
+                <div class="notif-card-cta">
+                  <span>Перейти к пункту инвойса</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+              </div>
+            </div>
+          </div>
           <button onclick="exitCabinet()" style="background:none;border:none;color:#9cbcae;cursor:pointer;" title="Выход на главную">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           </button>
@@ -1030,8 +1400,15 @@
 
       <!-- Карточка личных данных клиента (паспортные данные лида как в договоре) -->
       <div class="user-card">
-        <div class="user-card-name" id="view_fio">Шлыков Юрий Геннадьевич</div>
-        <div class="user-card-inn" id="view_inn">ИНН 772005512747</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
+          <div>
+            <div class="user-card-name" id="view_fio">Шлыков Юрий Геннадьевич</div>
+            <div style="font-size:11px;color:#a7f3d0;display:flex;align-items:center;gap:5px;margin-top:3px;">
+              <span style="display:inline-block;width:7px;height:7px;background:#4ade80;border-radius:50%;box-shadow:0 0 6px #4ade80;"></span>
+              <span>Паспортные данные владельца подтверждены в реестре ФТС России</span>
+            </div>
+          </div>
+        </div>
         
         <div class="user-data-grid">
           <div class="user-data-row">
@@ -1043,10 +1420,6 @@
             <span class="val" id="view_passport">45 18 892341</span>
           </div>
           <div class="user-data-row">
-            <span class="lbl">Личный номер:</span>
-            <span class="val" id="view_personal_num">772005512747</span>
-          </div>
-          <div class="user-data-row">
             <span class="lbl">Кем выдан:</span>
             <span class="val" id="view_pass_issuer">Отделом УФМС России по г. Москве</span>
           </div>
@@ -1054,7 +1427,7 @@
             <span class="lbl">Дата выдачи:</span>
             <span class="val" id="view_pass_date">14.05.2018</span>
           </div>
-          <div class="user-data-row">
+          <div class="user-data-row" style="grid-column: 1 / -1;">
             <span class="lbl">Адрес регистрации:</span>
             <span class="val" id="view_address">г. Москва, ул. Перовская, д. 22, корп. 1, кв. 84</span>
           </div>
@@ -1082,23 +1455,11 @@
             </button>
           </div>
 
-          <!-- Маршрут ТС (стандартное: Мюнхен — Вильнюс — Бенякони) -->
-          <div class="route-visual">
-            <div class="route-title">Маршрут ТС (Мюнхен — Вильнюс — Бенякони)</div>
-            <div class="route-steps">
-              <div class="route-progress" id="routeProgressLine"></div>
-              <div class="step-point passed">
-                <div class="step-dot">✓</div>
-                <div class="step-label">Мюнхен</div>
-              </div>
-              <div class="step-point passed">
-                <div class="step-dot">✓</div>
-                <div class="step-label">Вильнюс</div>
-              </div>
-              <div class="step-point current" id="stepBenyakoni">
-                <div class="step-dot">●</div>
-                <div class="step-label">Бенякони</div>
-              </div>
+          <!-- Маршрут ТС (динамический с точками) -->
+          <div class="route-visual" id="routeVisualWrap">
+            <div class="route-title" id="routeTitleText">Маршрут ТС (Мюнхен — Вильнюс — Бенякони — Красная Горка — Москва)</div>
+            <div class="route-steps" id="routeStepsContainer">
+              <!-- Рендерится через renderRoute() -->
             </div>
           </div>
 
@@ -1131,12 +1492,16 @@
                 <td class="val" id="view_car_year_body">2022 · Внедорожник (SAV)</td>
               </tr>
               <tr>
-                <td class="prop">VIN- объем двигателя:</td>
-                <td class="val" id="view_car_vin_engine" style="font-family:'Courier New',monospace;">WBAJU81040N872911 · 2993 см³</td>
+                <td class="prop">VIN-номер:</td>
+                <td class="val" id="view_car_vin" style="font-family:'Courier New',monospace;font-weight:700;letter-spacing:0.8px;color:#f0fdf4;">WBAJU81040N872911</td>
               </tr>
               <tr>
-                <td class="prop">Мощность л.с - пробег:</td>
-                <td class="val" id="view_car_power_mileage">286 л.с. · 42 300 км</td>
+                <td class="prop">Объем двигателя и мощность:</td>
+                <td class="val" id="view_car_engine_power">2993 см³ · 286 л.с.</td>
+              </tr>
+              <tr>
+                <td class="prop">Пробег:</td>
+                <td class="val" id="view_car_mileage">42 300 км</td>
               </tr>
               <tr>
                 <td class="prop">Цвет кузова- страна:</td>
@@ -1170,20 +1535,20 @@
             Полная хронология прохождения таможенных процедур, сертификации и оформления документов на автомобиль.
           </p>
 
-          <!-- Список из 16 этапов/документов -->
+          <!-- Список этапов/документов -->
           <div class="timeline-list" id="timelineListContainer">
-            <!-- Динамически заполняется через renderTimeline() -->
+            <!-- Динамически заполняется через renderTimeline() с учетом скрытия будущих шагов -->
           </div>
         </div>
       </div>
 
       <!-- Нижнее мобильное меню как на скриншоте (МЕНЮ) -->
       <div class="bottom-nav">
-        <button class="b-nav-item active" id="bnav-home" onclick="switchCabinetTab('status')">
+        <button class="b-nav-item active" id="bnav-home" onclick="goToHomeTab()">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
           Главная
         </button>
-        <button class="b-nav-item" id="bnav-status" onclick="switchCabinetTab('status')">
+        <button class="b-nav-item" id="bnav-status" onclick="goToStatusTab()">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           Статус
         </button>
@@ -1191,12 +1556,124 @@
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           Декларация
         </button>
-        <button class="b-nav-item" onclick="openManagerModal('car')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-          Менеджер
+        <button class="b-nav-item" id="bnav-support" onclick="openSupportModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          Поддержка
         </button>
       </div>
 
+    </div>
+  </div>
+
+
+  <!-- ================= МОДАЛЬНОЕ ОКНО ПОДДЕРЖКИ И FAQ (ДЛЯ КЛИЕНТА) ================= -->
+  <div class="support-modal-overlay" id="supportModal">
+    <div class="support-modal-box">
+      <div class="support-head">
+        <div>
+          <div class="support-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Таможенное сопровождение</span>
+          </div>
+          <div class="support-subtitle">Единый центр консультации декларантов и владельцев ТС</div>
+        </div>
+        <button type="button" class="support-close" onclick="closeSupportModal()">✕</button>
+      </div>
+
+      <!-- Контакты брокера -->
+      <div class="support-contact-cards">
+        <div class="support-card">
+          <span class="sc-title">Дежурный брокер</span>
+          <span class="sc-val" id="supp_broker_name">Егоров В. С. (№ТБ-4091)</span>
+        </div>
+        <div class="support-card">
+          <span class="sc-title">Горячая линия</span>
+          <span class="sc-val">8 (800) 550-89-20</span>
+        </div>
+        <div class="support-card">
+          <span class="sc-title">Режим работы</span>
+          <span class="sc-val" style="color:#4ade80;">Круглосуточно · 24/7</span>
+        </div>
+        <div class="support-card">
+          <span class="sc-title">Статус дела ТС</span>
+          <span class="sc-val" style="color:#fde047;">В обработке</span>
+        </div>
+      </div>
+
+      <!-- Кнопка Telegram -->
+      <a href="https://t.me/" target="_blank" class="support-tg-btn" id="supp_tg_link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+        <span>Написать в Telegram поддержки таможни</span>
+      </a>
+
+      <!-- Частые вопросы (FAQ) -->
+      <div class="faq-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <span>Часто задаваемые вопросы (FAQ)</span>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Почему оплата проходит через таможенного брокера, а не напрямую?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Согласно нормам Таможенного кодекса ЕАЭС, при транзитном перемещении и таможенном оформлении иностранных транспортных средств физические лица производят внесение депозитов и пошлин через аккредитованного таможенного брокера по единому лицевому счету ЕАЭС. Это гарантирует мгновенную регистрацию финансового закрытия и безотлагательное прохождение КПП без межбанковских задержек (до 5 рабочих дней).
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Почему требуется производить оплату до момента фактического прибытия авто?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Инвойс продавца, растаможка и обеспечение являются обязательным законным основанием для закрытия транзитной декларации на складе временного хранения (СВХ) и оформления выезда с контрольного поста (Бенякони / Красная Горка). Без подтвержденного зачисления средств система блокирует выдачу автомобиля и пересечение государственной границы РФ.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Что такое утилизационный сбор и почему он начислен?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Утилизационный сбор — установленный законодательством обязательный платеж в доход бюджета РФ (ст. 24.1 Федерального закона № 89-ФЗ). Оплата сбора необходима для активации электронного паспорта транспортного средства (ЭПТС) со статусом «Действующий», без которого автомобиль невозможно зарегистрировать в ГИБДД.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Действительно ли утильсбор возвратный и как происходит возврат на мой счет?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          Да. При ввозе транспортного средства для личного пользования и подтверждении льготного коэффициента, излишне внесенные средства или залоговая разница подлежат полному возврату на банковский счет владельца. Возврат осуществляется таможенным органом по электронному заявлению в течение 14 рабочих дней после первичной постановки ТС на учет в органах ГИБДД.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Какими документами подтверждается зачисление средств?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-answer">
+          По каждому этапу оплаты автоматически формируется официальный электронный Таможенно-приходный ордер (ТПО), акт сверки и платежная отметка в базе ФТС, которая отображается в вашем кабинете в реальном времени со статусом «Оплачено» и присвоенным номером документа.
+        </div>
+      </div>
+
+      <!-- Быстрая форма обращения -->
+      <div class="support-form-wrap">
+        <div style="font-size:12.5px;font-weight:700;color:#fff;margin-bottom:6px;">Задать вопрос дежурному инспектору</div>
+        <textarea id="supportUserMessage" rows="2" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;padding:8px;font-size:12px;box-sizing:border-box;resize:none;" placeholder="Напишите ваш вопрос или уточнение по оплате..."></textarea>
+        <button type="button" class="btn-submit" onclick="sendSupportMessage()" style="margin:8px 0 0;padding:8px 14px;font-size:12px;">
+          Отправить обращение
+        </button>
+      </div>
+
+      <div class="staff-login-link" onclick="promptStaffLogin()">
+        🔒 Вход для уполномоченных сотрудников (Режим менеджера)
+      </div>
     </div>
   </div>
 
@@ -1210,8 +1687,11 @@
         <button type="button" class="modal-tab-btn active" id="mtab-btn-car" onclick="switchModalTab('car')">
           1. Авто и клиент
         </button>
+        <button type="button" class="modal-tab-btn" id="mtab-btn-route" onclick="switchModalTab('route')">
+          2. Маршрут ТС
+        </button>
         <button type="button" class="modal-tab-btn" id="mtab-btn-steps" onclick="switchModalTab('steps')">
-          2. Этапы Кнопки 2 (16 пунктов)
+          3. Этапы и оплата (16 пунктов)
         </button>
       </div>
 
@@ -1220,11 +1700,6 @@
         <div class="form-group">
           <label>Текущее местонахождение авто:</label>
           <input type="text" id="m_location" value="КПП «Бенякони» (Зона таможенного контроля №2)">
-        </div>
-
-        <div class="form-group">
-          <label>Маршрут авто (текст):</label>
-          <input type="text" id="m_route" value="Мюнхен — Вильнюс — Бенякони">
         </div>
 
         <div class="form-group">
@@ -1248,13 +1723,18 @@
         </div>
 
         <div class="form-group">
-          <label>VIN- объем двигателя:</label>
-          <input type="text" id="m_vin_engine" value="WBAJU81040N872911 · 2993 см³">
+          <label>VIN-номер (отдельно):</label>
+          <input type="text" id="m_vin" value="WBAJU81040N872911">
         </div>
 
         <div class="form-group">
-          <label>Мощность л.с - пробег:</label>
-          <input type="text" id="m_power_mileage" value="286 л.с. · 42 300 км">
+          <label>Объем двигателя и мощность (в одном):</label>
+          <input type="text" id="m_engine_power" value="2993 см³ · 286 л.с.">
+        </div>
+
+        <div class="form-group">
+          <label>Пробег авто (отдельно):</label>
+          <input type="text" id="m_mileage" value="42 300 км">
         </div>
 
         <div class="form-group">
@@ -1278,9 +1758,64 @@
         </div>
       </form>
 
-      <!-- Вкладка 2: Редактирование 16 пунктов Кнопки 2 -->
+      <!-- Вкладка 2: Маршрут ТС (ползунок с точками) -->
+      <div id="managerRouteTab" style="display:none;">
+        <p style="font-size:12px;color:#9cbcae;margin-top:0;">
+          Выберите, на какой точке маршрута сейчас находится автомобиль. На всех пройденных точках автоматически будут стоять галочки (✓), а текущая будет активно подсвечена (●).
+        </p>
+
+        <div class="form-group">
+          <label>Текущая точка нахождения авто:</label>
+          <select id="m_route_current_select" onchange="handleRouteSelectChange()" style="width:100%;padding:10px;border-radius:6px;background:#0d3829;color:#fff;border:1px solid var(--acc);font-size:13px;">
+            <option value="0">1. Мюнхен (DE)</option>
+            <option value="1">2. Вильнюс (LT)</option>
+            <option value="2" selected>3. Бенякони (BY)</option>
+            <option value="3">4. Красная Горка (РФ)</option>
+            <option value="4">5. Смоленск / Москва (СБКТС)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Текстовый статус локации (под маршрутом):</label>
+          <input type="text" id="m_route_loc_text" value="КПП «Бенякони» (Зона таможенного контроля №2)">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button type="button" class="btn-submit" onclick="saveManagerRouteData()" style="margin:0;flex:1;">Сохранить маршрут</button>
+          <button type="button" onclick="closeManagerModal()" style="background:#405e52;border:none;color:#fff;padding:10px 16px;border-radius:6px;cursor:pointer;">Закрыть</button>
+        </div>
+      </div>
+
+      <!-- Вкладка 3: Редактирование 16 пунктов и скрытие будущих шагов -->
       <form id="managerStepsForm" onsubmit="saveManagerStepsData(event)" style="display:none;">
-        <p style="font-size:11.5px;color:#9cbcae;margin-top:0;">Здесь можно изменить дату, статус или сумму для каждого из 16 пунктов.</p>
+        <!-- Панель управления видимостью для клиента (как на скриншоте 1) -->
+        <div style="background:rgba(200,162,74,0.15);border:1px solid var(--acc);border-radius:10px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:12.5px;font-weight:700;color:#fde047;margin-bottom:6px;">
+            Управление доступом клиента к этапам (Скрытие будущих шагов)
+          </div>
+          <div style="font-size:11.5px;color:#d1e2da;line-height:1.4;margin-bottom:10px;">
+            Клиент не видит этапы наперед, пока не дойдет до них и не оплатит текущий. Включите следующий шаг или выберите активный этап:
+          </div>
+
+          <div class="form-group" style="margin-bottom:8px;">
+            <label style="color:#e5c368;">Текущий активный шаг для клиента:</label>
+            <select id="m_active_step_select" onchange="handleActiveStepChange()" style="width:100%;padding:8px 10px;border-radius:6px;background:#0d3829;color:#fff;border:1px solid #7bb59d;font-size:12.5px;">
+              <!-- Заполняется динамически -->
+            </select>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" onclick="activateNextStepQuick()" style="background:#22c55e;color:#0f3d2e;font-weight:700;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:12px;">
+              + Включить следующий шаг клиенту
+            </button>
+            <label style="font-size:11.5px;display:flex;align-items:center;gap:6px;cursor:pointer;color:#fff;">
+              <input type="checkbox" id="m_hide_future_toggle" checked>
+              Скрывать последующие шаги от клиента
+            </label>
+          </div>
+        </div>
+
+        <p style="font-size:11.5px;color:#9cbcae;margin-top:0;">Здесь можно изменить дату, статус или сумму для каждого пункта:</p>
 
         <div style="display:flex;flex-direction:column;gap:12px;" id="modalStepsFieldsContainer">
           <!-- Генерируется скриптом -->
@@ -1384,9 +1919,9 @@
         id: 11,
         title: "Инвойс продавца за автомобиль (Rechnung)",
         date: "12.10.2026",
-        status: "Оплачено",
-        statusType: "success",
-        desc: "Счет-фактура Autohaus Bavaria Süd GmbH (44 800 €)"
+        status: "Ожидает оплаты",
+        statusType: "warning",
+        desc: "Счет-фактура Autohaus Bavaria Süd GmbH (44 800 €) · Требуется оплата за автомобиль"
       },
       {
         id: 12,
@@ -1435,29 +1970,41 @@
       fio: "Шлыков Юрий Геннадьевич",
       phone: "+7 (926) 541-89-20",
       passport: "45 18 892341",
-      personalNum: "772005512747",
       passIssuer: "Отделом УФМС России по г. Москве",
       passDate: "14.05.2018",
       address: "г. Москва, ул. Перовская, д. 22, корп. 1, кв. 84",
       vin: "WBAJU81040N872911",
 
       carLocation: "КПП «Бенякони» (Зона таможенного контроля №2)",
-      carRoute: "Мюнхен — Вильнюс — Бенякони",
       importer: "ООО «Транзит-Евро Авто»",
       seller: "Autohaus Bavaria Süd GmbH",
       model: "BMW X5 xDrive30d M Sport",
       yearBody: "2022 · Внедорожник (SAV)",
-      vinEngine: "WBAJU81040N872911 · 2993 см³",
-      powerMileage: "286 л.с. · 42 300 км",
+      enginePower: "2993 см³ · 286 л.с.",
+      mileage: "42 300 км",
       colorCountry: "Черный металлик · Германия",
       customsCost: "10 450 €",
       priceEur: "44 800 €",
+
+      // Контрольные точки маршрута ТС
+      routePoints: [
+        { name: "Мюнхен (DE)", status: "passed" },
+        { name: "Вильнюс (LT)", status: "passed" },
+        { name: "Бенякони (BY)", status: "current" },
+        { name: "Красная Горка (РФ)", status: "upcoming" },
+        { name: "Смоленск / Москва (СБКТС)", status: "upcoming" }
+      ],
+      currentRouteIndex: 2,
+
+      // Управление видимостью этапов для клиента (Скрытие будущих шагов)
+      currentActiveStepId: 8, // По умолчанию шаг 8 (Растаможка) активен, шаги 9-16 закрыты
+      hideFutureSteps: true,
 
       steps: JSON.parse(JSON.stringify(DEFAULT_STEPS))
     };
 
     // Загрузка из localStorage
-    const saved = localStorage.getItem('customs_app_data_v2');
+    const saved = localStorage.getItem('customs_app_data_v4') || localStorage.getItem('customs_app_data_v3') || localStorage.getItem('customs_app_data_v2');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -1465,24 +2012,93 @@
         if (!appData.steps || appData.steps.length === 0) {
           appData.steps = JSON.parse(JSON.stringify(DEFAULT_STEPS));
         }
+        if (!appData.routePoints || appData.routePoints.length === 0) {
+          appData.routePoints = [
+            { name: "Мюнхен (DE)", status: "passed" },
+            { name: "Вильнюс (LT)", status: "passed" },
+            { name: "Бенякони (BY)", status: "current" },
+            { name: "Красная Горка (РФ)", status: "upcoming" },
+            { name: "Смоленск / Москва (СБКТС)", status: "upcoming" }
+          ];
+          appData.currentRouteIndex = 2;
+        }
+        if (typeof appData.currentActiveStepId !== 'number') {
+          appData.currentActiveStepId = 8;
+        }
+        if (typeof appData.hideFutureSteps !== 'boolean') {
+          appData.hideFutureSteps = true;
+        }
       } catch(e) {}
     }
 
+    // Рендер динамического маршрута ТС (ползунок с точками)
+    function renderRoute() {
+      const container = document.getElementById('routeStepsContainer');
+      const titleEl = document.getElementById('routeTitleText');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      // Линия общего прогресса
+      const progressLine = document.createElement('div');
+      progressLine.className = 'route-progress';
+      const pct = appData.routePoints.length > 1
+        ? (appData.currentRouteIndex / (appData.routePoints.length - 1)) * 100
+        : 0;
+      progressLine.style.width = `calc(${pct}% - 32px)`;
+      if (pct === 0) progressLine.style.width = '0%';
+      container.appendChild(progressLine);
+
+      // Заголовок маршрута
+      if (titleEl) {
+        const shortNames = appData.routePoints.map(p => p.name.split(' ')[0]);
+        titleEl.textContent = `Маршрут ТС (${shortNames.join(' — ')})`;
+      }
+
+      appData.routePoints.forEach((pt, idx) => {
+        const stepPt = document.createElement('div');
+        let statusClass = 'upcoming';
+        let icon = '○';
+
+        if (idx < appData.currentRouteIndex) {
+          statusClass = 'passed';
+          icon = '✓';
+        } else if (idx === appData.currentRouteIndex) {
+          statusClass = 'current';
+          icon = '●';
+        }
+
+        stepPt.className = `step-point ${statusClass}`;
+        stepPt.innerHTML = `
+          <div class="step-dot">${icon}</div>
+          <div class="step-label">${pt.name}</div>
+        `;
+        container.appendChild(stepPt);
+      });
+    }
+
+    // Рендер этапов с учетом скрытия будущих шагов от клиента
     function renderTimeline() {
       const container = document.getElementById('timelineListContainer');
       if (!container) return;
       container.innerHTML = '';
 
+      const maxStep = appData.hideFutureSteps ? appData.currentActiveStepId : appData.steps.length;
+
       appData.steps.forEach(step => {
+        if (step.id > maxStep) return; // Скрываем будущие шаги
+
         const item = document.createElement('div');
         item.className = 'timeline-item';
-        
-        const badgeClass = step.statusType || 'success';
+        item.id = 'timeline-step-' + step.id;
+
+        const isCurrentActive = (step.id === appData.currentActiveStepId);
+        const badgeClass = step.statusType || (isCurrentActive ? 'warning' : 'success');
 
         item.innerHTML = `
           <div class="t-header">
             <div class="t-num-title">
-              <span class="t-num">${step.id}</span>
+              <span class="t-num" style="${isCurrentActive ? 'background:#eab308;color:#0f3d2e;' : ''}">${step.id}</span>
               <span class="t-title">${step.title}</span>
             </div>
             ${step.date ? `<span class="t-date">${step.date}</span>` : ''}
@@ -1497,53 +2113,90 @@
         `;
         container.appendChild(item);
       });
+
+      // Если будущие шаги скрыты, показываем стильную карточку замка
+      if (appData.hideFutureSteps && maxStep < appData.steps.length) {
+        const nextStepObj = appData.steps.find(s => s.id === maxStep + 1);
+        const lockCard = document.createElement('div');
+        lockCard.className = 'timeline-locked-card';
+        lockCard.innerHTML = `
+          <div class="timeline-locked-icon">🔒</div>
+          <div class="timeline-locked-title">Следующий этап: ${nextStepObj ? nextStepObj.title : 'Контрольный пункт'}</div>
+          <div class="timeline-locked-desc">
+            Доступ к следующему этапу и сопутствующим документам откроется автоматически после подтверждения и оплаты текущего этапа №${maxStep}.
+          </div>
+        `;
+        container.appendChild(lockCard);
+      }
+    }
+
+    // Обновление уведомления в колокольчике
+    function updateBellNotification() {
+      const activeStep = appData.steps.find(s => s.id === appData.currentActiveStepId);
+      const notifCard = document.querySelector('.notif-card');
+      const badge = document.getElementById('cabBellBadge');
+
+      if (activeStep && (activeStep.status.includes('оплат') || activeStep.status.includes('Ожидает') || activeStep.statusType === 'warning')) {
+        if (badge) badge.style.display = 'flex';
+        if (notifCard) {
+          notifCard.innerHTML = `
+            <div class="notif-card-header">
+              <span>⚠️</span>
+              <span>Требуется оплата: ${activeStep.title}</span>
+            </div>
+            <div class="notif-card-desc">
+              Этап №${activeStep.id}. Статус: <b style="color:#fde047;">${activeStep.status}</b>.
+              ${activeStep.desc ? `<br><span style="font-size:10.5px;color:#a7f3d0;">${activeStep.desc}</span>` : ''}
+            </div>
+            <div class="notif-card-cta">
+              <span>Перейти к оплате этапа</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          `;
+          notifCard.onclick = () => goToActiveStep(activeStep.id);
+        }
+      } else {
+        if (badge) badge.textContent = '1';
+      }
     }
 
     function updateDOM() {
-      // Обновление карточки клиента
-      document.getElementById('view_fio').textContent = appData.fio;
-      document.getElementById('view_inn').textContent = 'ИНН ' + appData.personalNum;
-      document.getElementById('view_phone').textContent = appData.phone;
-      document.getElementById('view_passport').textContent = appData.passport;
-      document.getElementById('view_personal_num').textContent = appData.personalNum;
-      document.getElementById('view_pass_issuer').textContent = appData.passIssuer;
-      document.getElementById('view_pass_date').textContent = appData.passDate;
-      document.getElementById('view_address').textContent = appData.address;
+      // Обновление карточки клиента (без ИНН)
+      if (document.getElementById('view_fio')) document.getElementById('view_fio').textContent = appData.fio;
+      if (document.getElementById('view_phone')) document.getElementById('view_phone').textContent = appData.phone;
+      if (document.getElementById('view_passport')) document.getElementById('view_passport').textContent = appData.passport;
+      if (document.getElementById('view_pass_issuer')) document.getElementById('view_pass_issuer').textContent = appData.passIssuer;
+      if (document.getElementById('view_pass_date')) document.getElementById('view_pass_date').textContent = appData.passDate;
+      if (document.getElementById('view_address')) document.getElementById('view_address').textContent = appData.address;
 
-      // Обновление авто
-      document.getElementById('view_car_location').textContent = appData.carLocation;
-      document.getElementById('view_car_importer').textContent = appData.importer;
-      document.getElementById('view_car_seller').textContent = appData.seller;
-      document.getElementById('view_car_model').textContent = appData.model;
-      document.getElementById('view_car_year_body').textContent = appData.yearBody;
-      document.getElementById('view_car_vin_engine').textContent = appData.vinEngine;
-      document.getElementById('view_car_power_mileage').textContent = appData.powerMileage;
-      document.getElementById('view_car_color_country').textContent = appData.colorCountry;
-      document.getElementById('view_car_customs_cost').textContent = appData.customsCost;
-      document.getElementById('view_car_price_eur').textContent = appData.priceEur;
+      // Обновление авто (разделенные VIN, двигатель/мощность, пробег)
+      if (document.getElementById('view_car_location')) document.getElementById('view_car_location').textContent = appData.carLocation;
+      if (document.getElementById('view_car_importer')) document.getElementById('view_car_importer').textContent = appData.importer;
+      if (document.getElementById('view_car_seller')) document.getElementById('view_car_seller').textContent = appData.seller;
+      if (document.getElementById('view_car_model')) document.getElementById('view_car_model').textContent = appData.model;
+      if (document.getElementById('view_car_year_body')) document.getElementById('view_car_year_body').textContent = appData.yearBody;
+      if (document.getElementById('view_car_vin')) document.getElementById('view_car_vin').textContent = appData.vin;
+      if (document.getElementById('view_car_engine_power')) document.getElementById('view_car_engine_power').textContent = appData.enginePower;
+      if (document.getElementById('view_car_mileage')) document.getElementById('view_car_mileage').textContent = appData.mileage;
+      if (document.getElementById('view_car_color_country')) document.getElementById('view_car_color_country').textContent = appData.colorCountry;
+      if (document.getElementById('view_car_customs_cost')) document.getElementById('view_car_customs_cost').textContent = appData.customsCost;
+      if (document.getElementById('view_car_price_eur')) document.getElementById('view_car_price_eur').textContent = appData.priceEur;
 
+      renderRoute();
       renderTimeline();
+      updateBellNotification();
     }
 
-    // Регистрация клиента (Пункт 4)
+    // Регистрация клиента (Пункт 4 - только ФИО, телефон, логин и пароль)
     function handleRegistration(e) {
       e.preventDefault();
-      appData.fio = document.getElementById('reg_fio').value;
-      appData.phone = document.getElementById('reg_phone').value;
-      appData.passport = document.getElementById('reg_passport').value;
-      appData.personalNum = document.getElementById('reg_inn').value;
-      appData.passDate = document.getElementById('reg_pass_date').value;
-      appData.passIssuer = document.getElementById('reg_pass_issuer').value;
-      appData.address = document.getElementById('reg_address').value;
-      appData.vin = document.getElementById('reg_vin').value;
-      appData.vinEngine = appData.vin + " · 2993 см³";
+      const fioInput = document.getElementById('reg_fio').value.trim();
+      const phoneInput = document.getElementById('reg_phone').value.trim();
 
-      // Обновить в первом шаге
-      if (appData.steps && appData.steps[0]) {
-        appData.steps[0].desc = "Маршрут: Мюнхен (DE) — Вильнюс (LT) — Бенякони (BY). VIN: " + appData.vin;
-      }
+      if (fioInput) appData.fio = fioInput;
+      if (phoneInput) appData.phone = phoneInput;
 
-      localStorage.setItem('customs_app_data_v2', JSON.stringify(appData));
+      localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
       updateDOM();
       openCabinet('status');
     }
@@ -1572,6 +2225,7 @@
       const bnavStatus = document.getElementById('bnav-status');
       const bnavDecl = document.getElementById('bnav-decl');
       const bnavHome = document.getElementById('bnav-home');
+      const backBtnText = document.querySelector('#cabBackBtn span');
 
       if (tab === 'status') {
         btnStatus.classList.add('active');
@@ -1581,6 +2235,7 @@
         bnavStatus.classList.add('active');
         bnavDecl.classList.remove('active');
         bnavHome.classList.add('active');
+        if (backBtnText) backBtnText.textContent = 'В меню';
       } else {
         btnDecl.classList.add('active');
         btnStatus.classList.remove('active');
@@ -1589,23 +2244,138 @@
         bnavDecl.classList.add('active');
         bnavStatus.classList.remove('active');
         bnavHome.classList.remove('active');
+        if (backBtnText) backBtnText.textContent = 'Назад';
       }
       window.scrollTo(0, 0);
     }
 
-    // Модальное окно менеджера
+    // Возврат в меню / наверх по кнопке в шапке
+    function handleCabinetBack() {
+      const tabDecl = document.getElementById('tab-declaration-content');
+      if (tabDecl && tabDecl.style.display !== 'none') {
+        switchCabinetTab('status');
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Кнопка "Главная" в нижнем меню
+    function goToHomeTab() {
+      switchCabinetTab('status');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Кнопка "Статус" в нижнем меню
+    function goToStatusTab() {
+      switchCabinetTab('status');
+      const routeSection = document.querySelector('.route-visual');
+      if (routeSection) {
+        routeSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Открытие/закрытие выпадающего уведомления (колокольчик)
+    function toggleNotifications(forceState) {
+      const dropdown = document.getElementById('notificationsDropdown');
+      if (!dropdown) return;
+      if (typeof forceState === 'boolean') {
+        dropdown.classList.toggle('show', forceState);
+      } else {
+        dropdown.classList.toggle('show');
+      }
+    }
+
+    // Закрытие при клике вне окна
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('notificationsDropdown');
+      const bell = document.getElementById('cabBellBtn');
+      if (dropdown && dropdown.classList.contains('show')) {
+        if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      }
+    });
+
+    // Переход по клику на уведомление к активному этапу
+    function goToActiveStep(stepId) {
+      toggleNotifications(false);
+      switchCabinetTab('declaration');
+      setTimeout(() => {
+        const targetId = stepId || appData.currentActiveStepId;
+        const stepEl = document.getElementById('timeline-step-' + targetId);
+        if (stepEl) {
+          stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          stepEl.classList.remove('pulse-attention');
+          void stepEl.offsetWidth; // re-trigger animation
+          stepEl.classList.add('pulse-attention');
+        }
+      }, 150);
+    }
+
+    function goToInvoiceStep() {
+      goToActiveStep(appData.currentActiveStepId || 11);
+    }
+
+    // ================= МОДАЛЬНОЕ ОКНО ПОДДЕРЖКИ И FAQ =================
+    function openSupportModal() {
+      document.getElementById('supportModal').style.display = 'flex';
+    }
+
+    function closeSupportModal() {
+      document.getElementById('supportModal').style.display = 'none';
+    }
+
+    function toggleFaq(questionEl) {
+      const item = questionEl.closest('.faq-item');
+      item.classList.toggle('open');
+    }
+
+    function sendSupportMessage() {
+      const msg = document.getElementById('supportUserMessage').value.trim();
+      if (!msg) {
+        alert('Пожалуйста, напишите ваш вопрос перед отправкой.');
+        return;
+      }
+      const ticketNum = Math.floor(1000 + Math.random() * 9000);
+      alert(`Ваше обращение №${ticketNum} успешно зарегистрировано в системе таможенного сопровождения.\n\nДежурный брокер свяжется с вами в Telegram или по номеру ${appData.phone} в течение 10 минут.`);
+      document.getElementById('supportUserMessage').value = '';
+      closeSupportModal();
+    }
+
+    function promptStaffLogin() {
+      const code = prompt('Служебный вход: введите пароль сотрудника таможни (по умолчанию 1234):', '');
+      if (code === '1234' || code === 'admin' || code === '') {
+        closeSupportModal();
+        openManagerModal('car');
+      } else {
+        alert('Неверный код доступа.');
+      }
+    }
+
+    // ================= МОДАЛЬНОЕ ОКНО МЕНЕДЖЕРА =================
     function openManagerModal(defaultTab) {
       document.getElementById('m_location').value = appData.carLocation;
-      document.getElementById('m_route').value = appData.carRoute;
       document.getElementById('m_importer').value = appData.importer;
       document.getElementById('m_seller').value = appData.seller;
       document.getElementById('m_model').value = appData.model;
       document.getElementById('m_year_body').value = appData.yearBody;
-      document.getElementById('m_vin_engine').value = appData.vinEngine;
-      document.getElementById('m_power_mileage').value = appData.powerMileage;
+      document.getElementById('m_vin').value = appData.vin;
+      document.getElementById('m_engine_power').value = appData.enginePower;
+      document.getElementById('m_mileage').value = appData.mileage;
       document.getElementById('m_color_country').value = appData.colorCountry;
       document.getElementById('m_customs_cost').value = appData.customsCost;
       document.getElementById('m_price_eur').value = appData.priceEur;
+
+      // Маршрут
+      const routeSelect = document.getElementById('m_route_current_select');
+      if (routeSelect) routeSelect.value = String(appData.currentRouteIndex);
+      document.getElementById('m_route_loc_text').value = appData.carLocation;
+
+      // Управление доступом к шагам
+      initManagerActiveStepSelect();
+      document.getElementById('m_hide_future_toggle').checked = appData.hideFutureSteps;
 
       renderManagerStepsFields();
       switchModalTab(defaultTab || 'car');
@@ -1614,37 +2384,111 @@
 
     function switchModalTab(tab) {
       const btnCar = document.getElementById('mtab-btn-car');
+      const btnRoute = document.getElementById('mtab-btn-route');
       const btnSteps = document.getElementById('mtab-btn-steps');
       const formCar = document.getElementById('managerCarForm');
+      const tabRoute = document.getElementById('managerRouteTab');
       const formSteps = document.getElementById('managerStepsForm');
+
+      btnCar.classList.remove('active');
+      btnRoute.classList.remove('active');
+      btnSteps.classList.remove('active');
+      formCar.style.display = 'none';
+      tabRoute.style.display = 'none';
+      formSteps.style.display = 'none';
 
       if (tab === 'car') {
         btnCar.classList.add('active');
-        btnSteps.classList.remove('active');
         formCar.style.display = 'block';
-        formSteps.style.display = 'none';
+      } else if (tab === 'route') {
+        btnRoute.classList.add('active');
+        tabRoute.style.display = 'block';
       } else {
         btnSteps.classList.add('active');
-        btnCar.classList.remove('active');
-        formCar.style.display = 'none';
         formSteps.style.display = 'block';
+      }
+    }
+
+    function handleRouteSelectChange() {
+      const idx = parseInt(document.getElementById('m_route_current_select').value, 10);
+      const locNames = [
+        "г. Мюнхен (Таможенный терминал отправления DE)",
+        "КПП «Мядининкай / Вильнюс» (Транзит ЕС - LT)",
+        "КПП «Бенякони» (Зона таможенного контроля №2)",
+        "КПП «Красная Горка» (Государственная граница РФ)",
+        "СБКТС / Лаборатория (г. Москва / Смоленск)"
+      ];
+      if (locNames[idx]) {
+        document.getElementById('m_route_loc_text').value = locNames[idx];
+      }
+    }
+
+    function saveManagerRouteData() {
+      const idx = parseInt(document.getElementById('m_route_current_select').value, 10);
+      appData.currentRouteIndex = idx;
+      appData.carLocation = document.getElementById('m_route_loc_text').value;
+
+      localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
+      updateDOM();
+      closeManagerModal();
+    }
+
+    function initManagerActiveStepSelect() {
+      const select = document.getElementById('m_active_step_select');
+      if (!select) return;
+      select.innerHTML = '';
+
+      appData.steps.forEach(step => {
+        const opt = document.createElement('option');
+        opt.value = step.id;
+        opt.textContent = `${step.id}. ${step.title} (${step.status})`;
+        if (step.id === appData.currentActiveStepId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function handleActiveStepChange() {
+      const newStepId = parseInt(document.getElementById('m_active_step_select').value, 10);
+      appData.currentActiveStepId = newStepId;
+      appData.hideFutureSteps = document.getElementById('m_hide_future_toggle').checked;
+    }
+
+    function activateNextStepQuick() {
+      if (appData.currentActiveStepId < appData.steps.length) {
+        appData.currentActiveStepId += 1;
+        initManagerActiveStepSelect();
+        const activeStep = appData.steps.find(s => s.id === appData.currentActiveStepId);
+        if (activeStep) {
+          activeStep.status = 'Ожидает оплаты';
+          activeStep.statusType = 'warning';
+        }
+        localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
+        renderManagerStepsFields();
+        updateDOM();
+        alert(`Шаг №${appData.currentActiveStepId} (${activeStep ? activeStep.title : ''}) успешно активирован для клиента! Уведомление отправлено в колокольчик.`);
+      } else {
+        alert('Все 16 этапов уже открыты клиенту.');
       }
     }
 
     function renderManagerStepsFields() {
       const container = document.getElementById('modalStepsFieldsContainer');
+      if (!container) return;
       container.innerHTML = '';
 
       appData.steps.forEach((step, idx) => {
         const row = document.createElement('div');
-        row.style.background = 'rgba(0,0,0,0.25)';
+        row.style.background = (step.id === appData.currentActiveStepId) ? 'rgba(200,162,74,0.2)' : 'rgba(0,0,0,0.25)';
         row.style.padding = '10px';
         row.style.borderRadius = '8px';
-        row.style.border = '1px solid rgba(255,255,255,0.08)';
+        row.style.border = (step.id === appData.currentActiveStepId) ? '1px solid var(--acc)' : '1px solid rgba(255,255,255,0.08)';
 
         row.innerHTML = `
-          <div style="font-size:12.5px;font-weight:bold;color:#fde047;margin-bottom:6px;">
-            ${step.id}. ${step.title}
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-size:12.5px;font-weight:bold;color:${step.id === appData.currentActiveStepId ? '#fde047' : '#fff'};">
+              ${step.id}. ${step.title}
+            </div>
+            ${step.id === appData.currentActiveStepId ? '<span style="font-size:10px;background:#eab308;color:#0f3d2e;padding:2px 6px;border-radius:4px;font-weight:700;">ТЕКУЩИЙ ШАГ КЛИЕНТА</span>' : ''}
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px;">
             <div>
@@ -1661,9 +2505,13 @@
               </select>
             </div>
           </div>
-          <div>
-            <label style="font-size:10.5px;color:#9cbcae;">Текст статуса:</label>
+          <div style="margin-bottom:6px;">
+            <label style="font-size:10.5px;color:#9cbcae;">Текст статуса (или сумма к оплате):</label>
             <input type="text" id="step_status_${idx}" value="${step.status}" style="font-size:12px;padding:6px;">
+          </div>
+          <div>
+            <label style="font-size:10.5px;color:#9cbcae;">Описание / Номер документа / Сумма:</label>
+            <input type="text" id="step_desc_${idx}" value="${step.desc || ''}" style="font-size:12px;padding:6px;">
           </div>
         `;
         container.appendChild(row);
@@ -1677,35 +2525,40 @@
     function saveManagerCarData(e) {
       e.preventDefault();
       appData.carLocation = document.getElementById('m_location').value;
-      appData.carRoute = document.getElementById('m_route').value;
       appData.importer = document.getElementById('m_importer').value;
       appData.seller = document.getElementById('m_seller').value;
       appData.model = document.getElementById('m_model').value;
       appData.yearBody = document.getElementById('m_year_body').value;
-      appData.vinEngine = document.getElementById('m_vin_engine').value;
-      appData.powerMileage = document.getElementById('m_power_mileage').value;
+      appData.vin = document.getElementById('m_vin').value;
+      appData.enginePower = document.getElementById('m_engine_power').value;
+      appData.mileage = document.getElementById('m_mileage').value;
       appData.colorCountry = document.getElementById('m_color_country').value;
       appData.customsCost = document.getElementById('m_customs_cost').value;
       appData.priceEur = document.getElementById('m_price_eur').value;
 
-      localStorage.setItem('customs_app_data_v2', JSON.stringify(appData));
+      localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
       updateDOM();
       closeManagerModal();
     }
 
     function saveManagerStepsData(e) {
       e.preventDefault();
+      appData.currentActiveStepId = parseInt(document.getElementById('m_active_step_select').value, 10);
+      appData.hideFutureSteps = document.getElementById('m_hide_future_toggle').checked;
+
       appData.steps.forEach((step, idx) => {
         const dateInput = document.getElementById(`step_date_${idx}`);
         const typeInput = document.getElementById(`step_type_${idx}`);
         const statusInput = document.getElementById(`step_status_${idx}`);
+        const descInput = document.getElementById(`step_desc_${idx}`);
 
         if (dateInput) step.date = dateInput.value;
         if (typeInput) step.statusType = typeInput.value;
         if (statusInput) step.status = statusInput.value;
+        if (descInput) step.desc = descInput.value;
       });
 
-      localStorage.setItem('customs_app_data_v2', JSON.stringify(appData));
+      localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
       updateDOM();
       closeManagerModal();
     }
@@ -1713,7 +2566,10 @@
     function resetStepsToDefault() {
       if (confirm('Сбросить все 16 пунктов к стандартным значениям из ТЗ?')) {
         appData.steps = JSON.parse(JSON.stringify(DEFAULT_STEPS));
-        localStorage.setItem('customs_app_data_v2', JSON.stringify(appData));
+        appData.currentActiveStepId = 8;
+        appData.hideFutureSteps = true;
+        localStorage.setItem('customs_app_data_v4', JSON.stringify(appData));
+        initManagerActiveStepSelect();
         renderManagerStepsFields();
         updateDOM();
       }
