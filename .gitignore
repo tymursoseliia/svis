@@ -1,4 +1,13 @@
+# HTTrack СЃР»СѓР¶РµР±РЅС‹Рµ С„Р°Р№Р»С‹
+hts-cache/
+hts-log.txt
+
+# РІСЂРµРјРµРЅРЅС‹Рµ С„Р°Р№Р»С‹ РіРµРЅРµСЂР°С†РёРё PDF (РїСЂРѕС„РёР»СЊ Chrome Рё С‚.Рї.)
+tools/out/
+
 node_modules/
 .DS_Store
-*.log
-push.js
+Thumbs.db
+
+# исходный Word-файл договора (на сайте используется PDF)
+tools/*.docx

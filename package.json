@@ -1,0 +1,15 @@
+{
+  "name": "svis-yv-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SVIS.YV — шиномонтаж та зберігання шин (локальна копія сайту)",
+  "scripts": {
+    "start": "node server.js",
+    "update:prices": "node tools/update-prices.js",
+    "update:vacancies": "node tools/update-vacancies.js",
+    "build:dogovir": "node tools/build-dogovir.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
