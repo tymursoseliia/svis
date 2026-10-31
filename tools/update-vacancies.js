@@ -95,3 +95,5 @@ const staticCards = VAC.map(card);
   fs.writeFileSync(PAGE, html);
   console.log('updated vacancies.html');
 }
+
+require('./cache-bust');

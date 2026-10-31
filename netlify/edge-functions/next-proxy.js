@@ -1,7 +1,10 @@
-// Netlify Edge Function — то же, что делает server.js локально:
-//  1) Server Actions Next.js (свободные часы, запись, вакансии из базы) пересылаются на живой сайт;
-//  2) /_next/image?w=... отдаёт заранее скачанные картинки.
-const LIVE_ORIGIN = 'https://svisyv.in.ua';
+// Netlify Edge Function вЂ” С‚Рѕ Р¶Рµ, С‡С‚Рѕ РґРµР»Р°РµС‚ server.js Р»РѕРєР°Р»СЊРЅРѕ:
+//  1) Server Actions Next.js (СЃРІРѕР±РѕРґРЅС‹Рµ С‡Р°СЃС‹, Р·Р°РїРёСЃСЊ, РІР°РєР°РЅСЃРёРё РёР· Р±Р°Р·С‹) РїРµСЂРµСЃС‹Р»Р°СЋС‚СЃСЏ РЅР° Р¶РёРІРѕР№ СЃР°Р№С‚;
+//  2) /_next/image?w=... РѕС‚РґР°С‘С‚ Р·Р°СЂР°РЅРµРµ СЃРєР°С‡Р°РЅРЅС‹Рµ РєР°СЂС‚РёРЅРєРё.
+// Адрес оригинального Next.js-приложения (бэкенд записи/кабинета/вакансий из базы).
+// Задаётся в Netlify: Site configuration → Environment variables → BACKEND_ORIGIN
+// (например, постоянная ссылка на последний деплой оригинального сайта: https://<id>--svisdiski.netlify.app).
+const envGet = (k) => { try { return globalThis.Netlify?.env?.get(k); } catch { return undefined; } };
 
 const NEXT_IMAGE_BY_WIDTH = {
   '640': 'imagec65d.jpg',
@@ -23,6 +26,11 @@ export default async (request, context) => {
   }
 
   if (request.method === 'POST' && request.headers.get('next-action')) {
+    const LIVE_ORIGIN = (envGet('BACKEND_ORIGIN') || '').replace(/\/+$/, '');
+    if (!LIVE_ORIGIN || new URL(LIVE_ORIGIN).host === url.host) {
+      // бэкенд не настроен (или указывает сам на себя) — не зацикливаемся
+      return new Response('Backend is not configured (BACKEND_ORIGIN)', { status: 503 });
+    }
     const target = new URL(url.pathname + url.search, LIVE_ORIGIN);
     const headers = new Headers(request.headers);
     headers.delete('host');

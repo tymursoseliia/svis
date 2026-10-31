@@ -25,3 +25,5 @@ for (const f of files) {
   c = c.replace(anyMapsHref, (m) => (m.startsWith('https://www.google.com/maps/place/%D0%A8') ? (isHtml ? htmlUrl : REVIEW_URL) : m));
   if (c !== before) { fs.writeFileSync(f, c); console.log('updated', path.basename(f)); } else console.log('no change', path.basename(f));
 }
+
+require('./cache-bust');

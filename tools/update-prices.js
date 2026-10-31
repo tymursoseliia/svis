@@ -263,11 +263,14 @@ function extrasSection() {
   console.log('updated prices.html');
 }
 
-/* ---------------- 7. Калькулятор на остальных страницах ---------------- */
+/* ---------------- 7. Калькулятор на остальных страницах (правка на месте, без отката к копии) ---------------- */
 for (const f of FILES.calcPages) {
   if (f === FILES.pricesPage) continue;
-  let html = readClean(f);
-  html = html.replace(/(Орієнтовна вартість<\/span><span class="[^"]*">)1100(<!-- --> ₴)/, `$1${P.cars.find((r) => r.r === '15').t}$2`);
+  readClean(f); // создать резервную копию при первом запуске
+  let html = fs.readFileSync(f, 'utf8');
+  html = html.replace(/(Орієнтовна вартість<\/span><span class="[^"]*">)\d+(<!-- --> ₴)/, `$1${P.cars.find((r) => r.r === '15').t}$2`);
   fs.writeFileSync(f, html);
   console.log('updated', path.basename(f));
 }
+
+require('./cache-bust');

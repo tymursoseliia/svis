@@ -37,7 +37,9 @@ const NEXT_IMAGE_BY_WIDTH = {
   '3840': 'imagec6ea.jpg',
 };
 
-const LIVE_ORIGIN = 'https://svisyv.in.ua';
+// Оригинальное Next.js-приложение (бэкенд записи). Не svisyv.in.ua — домен может указывать на эту копию.
+// Адрес оригинального Next.js-приложения (бэкенд записи). Можно задать переменной окружения BACKEND_ORIGIN.
+const LIVE_ORIGIN = (process.env.BACKEND_ORIGIN || 'https://svisdiski.netlify.app').replace(/\/+$/, '');
 
 function proxyToLive(req, res) {
   const target = new URL(req.url, LIVE_ORIGIN);
