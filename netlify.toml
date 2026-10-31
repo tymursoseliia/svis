@@ -1,0 +1,18 @@
+# Netlify: публикуем папку сайта как корень домена,
+# чтобы пути /_next/... и /prices работали так же, как на svisyv.in.ua.
+[build]
+  publish = "svisyv.in.ua"
+  command = ""
+
+# Старые ссылки вида /svisyv.in.ua/index.html -> корень
+[[redirects]]
+  from = "/svisyv.in.ua/*"
+  to = "/:splat"
+  status = 301
+  force = true
+
+# Кэширование статики Next.js
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
